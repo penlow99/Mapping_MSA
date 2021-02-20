@@ -1,9 +1,6 @@
  
 from flask import Flask, render_template, url_for, redirect
 import os 
-from dotenv import load_dotenv
-
-load_dotenv()
 
 ############################
 ### Initialize flask app ###
@@ -21,8 +18,7 @@ def go_home():
 #-----------------------------------------------------------------
 @app.route('/index')
 def index():
-    mapKey = os.getenv("API_KEY")
-    return render_template('index.html', title="Flask Starter", mapKey=mapKey)
+    return render_template('index.html', title="Flask Starter")
 #-----------------------------------------------------------------
 ## if you don't have a favicon, use this route to get rid of the 404 favicon error
 # from flask import send_from_directory
