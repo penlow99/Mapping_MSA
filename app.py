@@ -1,6 +1,18 @@
  
 from flask import Flask, render_template, url_for, redirect
 import os 
+import pymongo
+from pymongo import MongoClient
+import pandas as pd
+
+# Create instance of MongoClient
+client = MongoClient()
+# Connection URI
+username = os.getenv('MONGO_UN')
+password = os.getenv('MONGO_PW')
+client = MongoClient('mongodb+srv://' + username + ':' + password + '@cluster0.l3pqt.mongodb.net/MSA?retryWrites=true&w=majority')
+# Select database
+db = client['MSA']
 
 ############################
 ### Initialize flask app ###
@@ -18,14 +30,23 @@ def go_home():
 #-----------------------------------------------------------------
 @app.route('/index')
 def index():
-    return render_template('index.html', title="Flask Starter")
+    return render_template('index.html', title="MSA Prediction Model")
 #-----------------------------------------------------------------
-## if you don't have a favicon, use this route to get rid of the 404 favicon error
-# from flask import send_from_directory
-# @app.route('/favicon.ico') 
-# def favicon():     
-#     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+@app.route('/table')
+def table():
+    # Select the collection within the database
+    gdp = db.GDP_raw
+    # Convert entire collection to Pandas dataframe
+    df_gdp = pd.DataFrame(list(gdp.find()))
+    df_gdp.drop(columns=['_id'], inplace=True)
+    html_table = df_gdp.to_html(header=True, table_id="table", index=False)
+    return render_template('table.html', title="MSA Table", table=html_table)
 #-----------------------------------------------------------------
+@app.route('/map')
+def map():
+    return render_template('map.html', title="MSA Map")
+#-----------------------------------------------------------------
+
 
 # app import check
 if __name__ == '__main__':
