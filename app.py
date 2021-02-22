@@ -34,7 +34,7 @@ def index():
 @app.route('/table')
 def table():
     # Select the collection within the database
-    db_data = db.GDP_raw
+    db_data = db.Predicted_2024_ROC_rank_total
     # Convert entire collection to Pandas dataframe
     df = pd.DataFrame(list(db_data.find()))
     df.drop(columns=['_id'], inplace=True)
