@@ -34,11 +34,11 @@ def index():
 @app.route('/table')
 def table():
     # Select the collection within the database
-    db_data = db.Predicted_2024_ROC_rank_total
+    gdp = db.GDP_raw
     # Convert entire collection to Pandas dataframe
-    df = pd.DataFrame(list(db_data.find()))
-    df.drop(columns=['_id'], inplace=True)
-    html_table = df.to_html(header=True, table_id="table", index=False)
+    df_gdp = pd.DataFrame(list(gdp.find()))
+    df_gdp.drop(columns=['_id'], inplace=True)
+    html_table = df_gdp.to_html(header=True, table_id="table", index=False)
     return render_template('table.html', title="MSA Table", table=html_table)
 #-----------------------------------------------------------------
 @app.route('/map')
