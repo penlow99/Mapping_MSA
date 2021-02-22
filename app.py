@@ -34,12 +34,12 @@ def index():
 @app.route('/table')
 def table():
     # Select the collection within the database
-    gdp = db.GDP_raw
+    db_data = db.GDP_raw
     # Convert entire collection to Pandas dataframe
-    df_gdp = pd.DataFrame(list(gdp.find()))
-    df_gdp.drop(columns=['_id'], inplace=True)
-    html_table = df_gdp.to_html(header=True, table_id="table", index=False)
-    return render_template('table.html', title="MSA Table")
+    df = pd.DataFrame(list(db_data.find()))
+    df.drop(columns=['_id'], inplace=True)
+    html_table = df.to_html(header=True, table_id="table", index=False)
+    return render_template('table.html', title="MSA Table", table=html_table)
 #-----------------------------------------------------------------
 @app.route('/map')
 def map():
