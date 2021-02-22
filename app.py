@@ -8,9 +8,8 @@ import pandas as pd
 # Create instance of MongoClient
 client = MongoClient()
 # Connection URI
-username = os.getenv('MONGO_UN')
-password = os.getenv('MONGO_PW')
-client = MongoClient('mongodb+srv://' + username + ':' + password + '@cluster0.l3pqt.mongodb.net/MSA?retryWrites=true&w=majority')
+connStr = os.getenv('MONGO_CONN')
+client = MongoClient(connStr)
 # Select database
 db = client['MSA']
 
@@ -35,11 +34,11 @@ def index():
 @app.route('/table')
 def table():
     # Select the collection within the database
-    gdp = db.GDP_raw
+    db_data = db.Predicted_2024_ROC_rank_total
     # Convert entire collection to Pandas dataframe
-    df_gdp = pd.DataFrame(list(gdp.find()))
-    df_gdp.drop(columns=['_id'], inplace=True)
-    html_table = df_gdp.to_html(header=True, table_id="table", index=False)
+    df = pd.DataFrame(list(db_data.find()))
+    df.drop(columns=['_id'], inplace=True)
+    html_table = df.to_html(header=True, table_id="table", index=False)
     return render_template('table.html', title="MSA Table", table=html_table)
 #-----------------------------------------------------------------
 @app.route('/map')
