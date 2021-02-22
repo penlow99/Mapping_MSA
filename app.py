@@ -39,7 +39,7 @@ def table():
     df_gdp = pd.DataFrame(list(gdp.find()))
     df_gdp.drop(columns=['_id'], inplace=True)
     html_table = df_gdp.to_html(header=True, table_id="table", index=False)
-    return render_template('table.html', title="MSA Table", table=html_table)
+    return render_template('table.html', title="MSA Table")
 #-----------------------------------------------------------------
 @app.route('/map')
 def map():
