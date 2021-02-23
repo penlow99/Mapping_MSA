@@ -38,7 +38,7 @@ def table():
     # Convert entire collection to Pandas dataframe
     df = pd.DataFrame(list(db_data.find()))
     df.drop(columns=['_id'], inplace=True)
-    html_table = df.to_html(header=True, table_id="table", index=False)
+    html_table = df.to_html(header=True, table_id="table_data", index=False)
     return render_template('table.html', title="MSA Table", table=html_table)
 #-----------------------------------------------------------------
 @app.route('/map')

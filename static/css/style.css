@@ -8,11 +8,12 @@ body,
 }
 
 table {
-  background-color: rgb(221, 236, 234);
+  border: 0;
 }
 
 th {
-  background-color: rgb(192, 194, 194);
+  background-color: rgb(124, 230, 230);
+  text-align: left;
 }
 
 tr:nth-child(even) {
