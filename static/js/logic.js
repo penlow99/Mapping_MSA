@@ -46,13 +46,27 @@ L.control.layers(baseMaps).addTo(map);
 
 // Load up the MSA geojson data
 let MSAjson = "https://raw.githubusercontent.com/penlow99/Mapping_MSA/main/MSA_geo.geojson"
-// Use the MSA list to 
-let msaYes = ['10540', '12020', '12060', '12220', '12420', '13380', '13460', '13900', '14260', '14500', '14540', '15500', '15980', '16700', '16740', '17300', '17660', '17780', '17820', '18140', '18880', '19100', '19300', '19660', '19740', '19780', '20100', '20500', '22020', '22220', '22660', '23580', '24540', '24860', '25220', '25940', '26420', '26620', '26820', '26980', '27260', '27860', '28420', '28660', '29200', '29460', '29700', '29820', '30700', '30860', '31180', '32580', '33100', '33260', '34580', '34820', '34940', '34980', '35840', '36100', '36220', '36260', '36420', '36500', '36740', '37340', '37860', '38060', '38900', '38940', '39150', '39340', '39460', '39580', '39660', '39900', '41100', '41420', '41540', '41620', '41700', '42340', '42660', '42680', '43300', '43620', '43900', '44060', '44700', '45300', '45540', '46300', '46340', '47580', '47900', '48900']
+
 var counter = 0
 var NewList = []
+
+// get values dumped into hidden fields in html
+var data_dump = document.getElementById('hidden_data').value
+var cbsa_dump = document.getElementById('hidden_cbsa').value
+var emergent_dump = document.getElementById('hidden_emergent').value
+// separate into arrays
+var arrayData = data_dump.split('||');
+var arrayCBSA = cbsa_dump.split('||')
+var msaYes = emergent_dump.split('||')
+console.log(msaYes)
+// use two arrays to build dictionary with CBSA as key
+dict = {}
+for(var i = 0; i < arrayData.length; i++) {
+  dict[arrayCBSA[i]] = arrayData[i];
+}
+
 // Grabbing our GeoJSON data.
 d3.json(MSAjson).then(function(data) {
-  //console.log(data);
 // Creating a GeoJSON layer with the retrieved data.
   L.geoJson(data, {
     filter: function(feature) {
@@ -65,10 +79,45 @@ d3.json(MSAjson).then(function(data) {
       } else {
         return noIt;
       }
-  },
+    },
     onEachFeature: function(feature, layer) {
-      layer.bindPopup("<h3>MSA: " + feature.properties.name + "</h3><h4>" + feature.properties.cbsafp + "</h4>");
+      let cbsa = feature.properties.cbsafp;
+      layer.bindPopup(build_html(feature.properties.name, cbsa, dict[cbsa]));
     }
   }).addTo(map);
-console.log(NewList)
+//console.log(NewList)
 });
+
+function build_html(msa_name, cbsa, ranks) {
+  var arrRanks = ranks.split('|')
+  var html = `
+  <h3>MSA:`  + msa_name + `</h3>
+  <table>
+    <tr>
+        <td>CBSA : </td>
+        <td>` + cbsa + `</td>
+    </tr>
+    <tr>
+        <td>Population ROC Rank : </td>
+        <td>` + arrRanks[0] + `</td>
+    </tr>
+    <tr>
+        <td>Unemployment ROC Rank : </td>
+        <td>` + arrRanks[1] + `</td>
+    </tr>
+    <tr>
+        <td>Employment ROC Rank : </td>
+        <td>` + arrRanks[2] + `</td>
+    </tr>
+    <tr>
+        <td>GDP ROC Rank : </td>
+        <td>` + arrRanks[3] + `</td>
+    </tr>
+    <tr>
+        <td>Rank Total : </td>
+        <td>` + arrRanks[4] + `</td>
+    </tr>
+  </table>
+  `
+  return html
+}

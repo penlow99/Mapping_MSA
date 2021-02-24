@@ -34,7 +34,7 @@ def index():
 @app.route('/table')
 def table():
     # Select the collection within the database
-    db_data = db.Predicted_2024_ROC_rank_total
+    db_data = db.Predicted_2024_ROC_rank_total2
     # Convert entire collection to Pandas dataframe
     df = pd.DataFrame(list(db_data.find()))
     df.drop(columns=['_id'], inplace=True)
@@ -43,7 +43,26 @@ def table():
 #-----------------------------------------------------------------
 @app.route('/map')
 def map():
-    return render_template('map.html', title="MSA Map")
+    db_data = db.Predicted_2024_ROC_rank_total2
+    # Convert entire collection to Pandas dataframe
+    df = pd.DataFrame(list(db_data.find()))
+    df.drop(columns=['_id'], inplace=True)
+
+    # create the 'Emergent' list
+    df_top = df[['CBSA', 'Rank_Total']].copy()
+    df_top = df_top.sort_values(by=['Rank_Total'])
+    ser_top = df_top.iloc[0:39,0]
+    emergent_string = ''
+    for value in ser_top:
+        emergent_string = emergent_string + str(value) + '||'
+
+    # create two lists for the javascript
+    cbsa_string = ''
+    data_string = ''
+    for index, row in df.iterrows():
+        cbsa_string = cbsa_string + str(row['CBSA']) + '||'
+        data_string = data_string + str(row['Pop_ROC_Rank']) + '|' + str(row['Unem_ROC_Rank']) + '|' + str(row['Emp_ROC_Rank']) + '|' + str(row['GDP_ROC_Rank']) + '|' + str(row['Rank_Total']) + '||'
+    return render_template('map.html', title="MSA Map", cbsa=cbsa_string, data=data_string, emergent=emergent_string)
 #-----------------------------------------------------------------
 
 
